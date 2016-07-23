@@ -71,7 +71,7 @@ class MongoDb {
   Future save(dynamic collection, Object obj) {
     var dbCol = _collection(collection);
     if (obj is! Map) {
-      obj = _serializer.encode(obj);
+      obj = _serializer.toMap(obj);
     }
     return dbCol.save(obj);
   }
