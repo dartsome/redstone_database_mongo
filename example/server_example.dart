@@ -17,6 +17,7 @@ class User {
   @SerializedName("_id")
   ObjectId id;
   String name;
+  String custom;
 }
 
 
@@ -55,5 +56,20 @@ class UsersService extends MongoDbService<User> {
   Future<User> getUser(String id) {
     app.redstoneLogger.info("GET /users/$id");
     return findOne({"_id": new ObjectId.fromHexString(id)});
+  }
+
+
+  @app.Route("/:id", methods: const [app.POST])
+  @Encode()
+  Future<User> replaceUser(String id, @Decode() User user) {
+    app.redstoneLogger.info("GET /users/$id");
+    return update({"_id": new ObjectId.fromHexString(id)}, user);
+  }
+
+  @app.Route("/:id", methods: const [app.PUT])
+  @Encode()
+  Future<User> updateUser(String id, @Decode() User user) {
+    app.redstoneLogger.info("GET /users/$id");
+    return update({"_id": new ObjectId.fromHexString(id)}, user, override: false);
   }
 }
