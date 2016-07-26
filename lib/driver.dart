@@ -120,11 +120,9 @@ class MongoDb {
       selector = _serializer.toMap(selector);
     }
     if (obj != null && obj is! Map && obj is! ModifierBuilder) {
-      if (override) {
-        obj = _serializer.toMap(obj);
-      } else {
-        throw new Exception("Not yet implemented");
-//        obj = _updtCodec.encode(obj); // TODO
+      obj = _serializer.toMap(obj);
+      if (!override) {
+        obj = { r'$set': obj };
       }
     }
     return dbCol.update(selector, obj, upsert: upsert, multiUpdate: multiUpdate);
@@ -152,35 +150,3 @@ class MongoDb {
     return collection;
   }
 }
-
-// TODO
-//FieldEncoder _updtFieldEncoder = (Map data, String fieldName, Field fieldInfo,
-//    List metadata, Object value) {
-//  if (value == null) {
-//    return;
-//  }
-//  String name = fieldInfo.model;
-//  if (name == null) {
-//    name = fieldName;
-//  }
-//  Map set = data[r'$set'];
-//  if (set == null) {
-//    set = {};
-//    data[r'$set'] = set;
-//  }
-//  if (fieldInfo is Id || fieldInfo is ReferenceId) {
-//    if (value is String) {
-//      value = ObjectId.parse(value);
-//      set[name] = value;
-//    } else if (value is List) {
-//      value = (value as List).map((o) => ObjectId.parse(o)).toList();
-//      set[name] = value;
-//    }
-//  } else if (value is Map) {
-//    (value[r"$set"] as Map).forEach((k, v) {
-//      set["${name}.${k}"] = v;
-//    });
-//  } else {
-//    set[name] = value;
-//  }
-//};
