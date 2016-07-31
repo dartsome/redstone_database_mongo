@@ -20,8 +20,8 @@ class MongoDbManager extends DatabaseManager<MongoDb> {
    * that will be created.
    *
    */
-  MongoDbManager(Serializer serializer, String uri, {int poolSize: 3}): super(serializer) {
-    _pool = new _MongoDbPool(uri, poolSize);
+  MongoDbManager(Serializer serializer, String uri, {WriteConcern writeConcern: WriteConcern.ACKNOWLEDGED, int poolSize: 3}): super(serializer) {
+    _pool = new _MongoDbPool(uri, writeConcern, poolSize);
   }
 
   void closeConnection(MongoDb connection, {error}) {
@@ -32,19 +32,24 @@ class MongoDbManager extends DatabaseManager<MongoDb> {
   Future<MongoDb> getConnection() {
     return _pool.getConnection().then((managedConn) => new MongoDb(serializer, managedConn));
   }
+
+  Future closeConnections() {
+    return _pool.closeConnections();
+  }
 }
 
 class _MongoDbPool extends ConnectionPool<Db> {
   String uri;
+  WriteConcern writeConcern;
 
-  _MongoDbPool(String this.uri, int poolSize) : super(poolSize);
-
-  void closeConnection(Db conn) {
-    conn.close();
-  }
+  _MongoDbPool(String this.uri, WriteConcern this.writeConcern, int poolSize) : super(poolSize);
 
   Future<Db> openNewConnection() {
     var conn = new Db(uri);
-    return conn.open().then((_) => conn);
+    return conn.open(writeConcern: writeConcern).then((_) => conn);
+  }
+
+  void closeConnection(Db conn) {
+    conn.close();
   }
 }

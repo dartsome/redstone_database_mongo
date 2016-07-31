@@ -51,6 +51,9 @@ class MongoDbService<T> {
   /// The name of the MongoDB collection associated with this service
   final String collectionName;
 
+  /// acknowledgment of write operations with various paramate
+  final WriteConcern writeConcern;
+
   /// The MongoDB connection wrapper
   MongoDb get mongoDb =>
       _mongoDb != null ? _mongoDb : request.attributes[dbConnectionAttribute];
@@ -67,13 +70,13 @@ class MongoDbService<T> {
    * This service will use the database connection
    * associated with the current http request.
    */
-  MongoDbService(this.collectionName);
+  MongoDbService(this.collectionName, {WriteConcern this.writeConcern});
 
   /**
    * Creates a new MongoDB service, using the provided
    * MongoDB connection.
    */
-  MongoDbService.fromConnection(this._mongoDb, this.collectionName);
+  MongoDbService.fromConnection(this._mongoDb, this.collectionName, {WriteConcern this.writeConcern});
 
   /**
    * Wrapper for DbCollection.find().
@@ -100,8 +103,8 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be saved.
    */
-  Future save(T obj) {
-    return mongoDb.save(collection, obj);
+  Future save(T obj, {WriteConcern writeConcern}) {
+    return mongoDb.save(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
   /**
@@ -109,8 +112,8 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be inserted.
    */
-  Future insert(T obj) {
-    return mongoDb.insert(collection, obj);
+  Future insert(T obj, {WriteConcern writeConcern}) {
+    return mongoDb.insert(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
   /**
@@ -118,8 +121,8 @@ class MongoDbService<T> {
    *
    * [objs] are the objectes to be inserted.
    */
-  Future insertAll(List<T> objs) {
-    return mongoDb.insertAll(collection, objs);
+  Future insertAll(List<T> objs, {WriteConcern writeConcern}) {
+    return mongoDb.insertAll(collection, objs, writeConcern: writeConcern ?? this.writeConcern);
   }
 
   /**
@@ -130,10 +133,10 @@ class MongoDbService<T> {
    * if [override] is false, then only non null fields will be updated,
    * otherwise, the entire document will be replaced.
    */
-  Future update(dynamic selector, T obj, {bool override: true, bool upsert: false, bool multiUpdate: false}) {
+  Future update(dynamic selector, T obj, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
     return mongoDb.update(collection, selector, obj,
         override: override, upsert: upsert,
-        multiUpdate: multiUpdate);
+        multiUpdate: multiUpdate, writeConcern: writeConcern ?? this.writeConcern);
   }
 
   /**
@@ -142,7 +145,17 @@ class MongoDbService<T> {
    * [selector] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future remove(dynamic selector) {
-    return mongoDb.remove(collection, selector);
+  Future remove(dynamic selector, {WriteConcern writeConcern}) {
+    return mongoDb.remove(collection, selector, writeConcern: writeConcern ?? this.writeConcern);
+  }
+
+  /**
+   * Wrapper for DbCollection.findAndModify().
+   *
+   * [query] can be a Map, a SelectorBuilder,
+   * or an encodable object.
+   */
+  Future findAndModify({query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) {
+    return mongoDb.findAndModify(collection, query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert, writeConcern: writeConcern ?? this.writeConcern);
   }
 }
