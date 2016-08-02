@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.2+1
+- Updated object can be Map or ModifierBuilder, not only Serializable object
+
 ## 0.1.2
 - Add closeConnections in MongoDbManager
 - Add optional writeConcern parameter in MongoDbManager
