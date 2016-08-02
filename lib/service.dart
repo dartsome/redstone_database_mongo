@@ -128,13 +128,13 @@ class MongoDbService<T> {
   /**
    * Wrapper for DbCollection.update().
    *
-   * [selector] can be a Map, a SelectorBuilder,
-   * or an encodable object. [obj] is the object to be updated, and
-   * if [override] is false, then only non null fields will be updated,
-   * otherwise, the entire document will be replaced.
+   * [selector] can be a Map, a SelectorBuilder, or an encodable object.
+   * [update] is the object to be updated, and can be a Map, a ModifierBuilder
+   * or an encodable object. If [override] is false, then only non null fields
+   * will be updated, otherwise, the entire document will be replaced.
    */
-  Future update(dynamic selector, T obj, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
-    return mongoDb.update(collection, selector, obj,
+  Future update(dynamic selector, Object update, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
+    return mongoDb.update(collection, selector, update,
         override: override, upsert: upsert,
         multiUpdate: multiUpdate, writeConcern: writeConcern ?? this.writeConcern);
   }

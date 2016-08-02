@@ -115,23 +115,23 @@ class MongoDb {
    *
    * [collection] is the MongoDb collection where the query will be executed,
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
-   * or an encodable object. [obj] is the object to be updated, and can be a Map, a
-   * ModifierBuilder or an encodable object. If [obj] is an encodable object and
+   * or an encodable object. [update] is the object to be updated, and can be a Map, a
+   * ModifierBuilder or an encodable object. If [update] is an encodable object and
    * [override] is false, then the codec will produce a ModifierBuilder, and only
    * non null fields will be updated, otherwise, the entire document will be updated.
    */
-  Future update(dynamic collection, dynamic selector, Object obj, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
+  Future update(dynamic collection, dynamic selector, Object update, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
-    if (obj != null && obj is! Map && obj is! ModifierBuilder) {
-      obj = _serializer.toMap(obj);
+    if (update != null && update is! Map && update is! ModifierBuilder) {
+      update = _serializer.toMap(update);
       if (!override) {
-        obj = { r'$set': obj };
+        update = { r'$set': update };
       }
     }
-    return dbCol.update(selector, obj, upsert: upsert, multiUpdate: multiUpdate, writeConcern: writeConcern);
+    return dbCol.update(selector, update, upsert: upsert, multiUpdate: multiUpdate, writeConcern: writeConcern);
   }
 
   /**
