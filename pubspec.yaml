@@ -1,6 +1,6 @@
 name: redstone_database_mongo
 description: MongoDB extension for redstone_database_plugin
-version: 0.1.2+1
+version: 0.1.3
 authors:
   - Stéphane Este-Gracias <sestegra@gmail.com>
   - Hadrien Lejard <hadrien.lejard@gmail.com>
@@ -14,7 +14,7 @@ dependencies:
   mongo_dart: ^0.2.9
   redstone: ^0.6.7
   redstone_database_plugin: ^0.1.0+1
-  serializer: ^0.4.0
+  serializer: ^0.4.2
 
 dev_dependencies:
   test: ^0.12.0

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+- Align with serializer version 0.4.2
+- Add dynamic serialization
+
 ## 0.1.2+1
 - Updated object can be Map or ModifierBuilder, not only Serializable object
 
