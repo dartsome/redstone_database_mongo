@@ -22,7 +22,7 @@ class User {
 
 
 main() {
-  var serializer = new Serializer(JSON)
+  var serializer = new Serializer(codec: JSON)
     ..addTypeCodec(ObjectId, new ObjectIdCodec());
   var dbManager = new MongoDbManager(serializer, "mongodb://localhost/test", poolSize: 3);
   app.addPlugin(getDatabasePlugin(dbManager));

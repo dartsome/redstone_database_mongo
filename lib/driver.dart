@@ -43,13 +43,17 @@ class MongoDb {
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
    * or an encodable object. The query result will be decoded to List<[type]>.
    */
-  Future<List> find(dynamic collection, Type type, [dynamic selector]) {
+  Future<List> find(dynamic collection, Type type, [dynamic selector]) async {
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
-    return dbCol.find(selector).toList().then((result) =>
-        _serializer.fromList(result, type));
+    var result = await dbCol.find(selector).toList();
+    if (type == dynamic) {
+      return _serializer.fromList(result, useTypeInfo: true);
+    } else {
+      return _serializer.fromList(result, type: type);
+    }
   }
 
   /**
@@ -59,13 +63,17 @@ class MongoDb {
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
    * or an encodable object. The query result will be decoded to an object of type [type]
    */
-  Future findOne(dynamic collection, Type type, [dynamic selector]) {
+  Future findOne(dynamic collection, Type type, [dynamic selector]) async {
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
-    return dbCol.findOne(selector).then((result) =>
-        _serializer.fromMap(result, type));
+    var result = await dbCol.findOne(selector);
+    if (type == dynamic) {
+      return _serializer.fromMap(result, useTypeInfo: true);
+    } else {
+      return _serializer.fromMap(result, type: type);
+    }
   }
 
   /**
