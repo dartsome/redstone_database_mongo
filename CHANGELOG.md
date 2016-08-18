@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3+1
+- Remove cast on object for save, insert and insertAll (could be a Map)
+
 ## 0.1.3
 - Align with serializer version 0.4.2
 - Add dynamic serialization
