@@ -103,7 +103,7 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be saved.
    */
-  Future save(T obj, {WriteConcern writeConcern}) {
+  Future save(obj, {WriteConcern writeConcern}) {
     return mongoDb.save(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -112,7 +112,7 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be inserted.
    */
-  Future insert(T obj, {WriteConcern writeConcern}) {
+  Future insert(obj, {WriteConcern writeConcern}) {
     return mongoDb.insert(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -121,7 +121,7 @@ class MongoDbService<T> {
    *
    * [objs] are the objectes to be inserted.
    */
-  Future insertAll(List<T> objs, {WriteConcern writeConcern}) {
+  Future insertAll(List objs, {WriteConcern writeConcern}) {
     return mongoDb.insertAll(collection, objs, writeConcern: writeConcern ?? this.writeConcern);
   }
 
