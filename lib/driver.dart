@@ -23,7 +23,6 @@ bool isLastErrorDuplicateKey(Map lastError) =>
 class MongoDb {
   Serializer _serializer;
   ManagedConnection _managedConn;
-  Serializer get serializer => _serializer;
   ManagedConnection get managedConn => _managedConn;
 
   MongoDb(this._serializer, this._managedConn);
