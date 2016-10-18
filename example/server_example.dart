@@ -25,7 +25,7 @@ main() {
   var serializer = new Serializer(codec: JSON)
     ..addTypeCodec(ObjectId, new ObjectIdCodec());
   var dbManager = new MongoDbManager(serializer, "mongodb://localhost/test", poolSize: 3);
-  app.addPlugin(getDatabasePlugin(dbManager));
+  app.addPlugin(getDatabasePlugin(serializer, dbManager));
   app.setupConsoleLog(Level.INFO);
   app.start();
 }
