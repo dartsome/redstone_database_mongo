@@ -10,7 +10,7 @@ import 'package:redstone_database_mongo/manager.dart';
 import 'package:redstone_database_mongo/service.dart';
 import 'package:redstone_database_plugin/plugin.dart';
 import 'package:serializer/codecs.dart';
-import 'package:serializer/serializer.dart';
+import 'package:serializer/serializer_codegen.dart';
 
 @serializable
 class User {
@@ -22,7 +22,7 @@ class User {
 
 
 main() {
-  var serializer = new Serializer(codec: JSON)
+  var serializer = new CodegenSerializer(codec: JSON)
     ..addTypeCodec(ObjectId, new ObjectIdCodec());
   var dbManager = new MongoDbManager(serializer, "mongodb://localhost/test", poolSize: 3);
   app.addPlugin(getDatabasePlugin(serializer, dbManager));

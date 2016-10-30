@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:connection_pool/connection_pool.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:serializer/serializer.dart';
+import 'package:serializer/core.dart';
 
 bool isLastErrorValid(Map lastError) =>
     lastError['ok'] == 1 && lastError['err'] == null;

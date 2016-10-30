@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:connection_pool/connection_pool.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:redstone_database_plugin/database.dart';
-import 'package:serializer/serializer.dart';
+import 'package:serializer/core.dart';
 
 import 'driver.dart';
 
