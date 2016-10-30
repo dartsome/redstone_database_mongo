@@ -12,12 +12,15 @@ environment:
 dependencies:
   connection_pool: ^0.1.1
   mongo_dart: ^0.2.9
-  redstone: ^0.6.7
   #redstone_database_plugin: ^0.1.0+1
   redstone_database_plugin:
     git:
       url: https://github.com/dartsome/redstone_database_plugin.git
       ref: serializer_codegen
+  #redstone: ^0.6.7
+  redstone:
+    git:
+      url: https://github.com/dartsome/redstone.git
 
 dev_dependencies:
   test: ^0.12.0
