@@ -156,6 +156,11 @@ class MongoDbService<T> {
    * or an encodable object.
    */
   Future findAndModify({query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) {
-    return mongoDb.findAndModify(collection, query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert, writeConcern: writeConcern ?? this.writeConcern);
+    return mongoDb.findAndModify(collection, T, query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert, writeConcern: writeConcern ?? this.writeConcern);
   }
+
+  /**
+   * Wrapper for DbCollection.getLastError()
+   */
+  Future getLastError({WriteConcern writeConcern}) => mongoDb.getLastError(writeConcern: writeConcern ?? this.writeConcern);
 }

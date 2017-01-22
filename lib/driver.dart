@@ -48,7 +48,9 @@ class MongoDb {
       selector = _serializer.toMap(selector);
     }
     var result = await dbCol.find(selector).toList();
-    if (type == dynamic) {
+    if (type == null) {
+      return result;
+    } else if (type == dynamic) {
       return _serializer.fromList(result, useTypeInfo: true);
     } else {
       return _serializer.fromList(result, type: type);
@@ -68,7 +70,9 @@ class MongoDb {
       selector = _serializer.toMap(selector);
     }
     var result = await dbCol.findOne(selector);
-    if (type == dynamic) {
+    if (type == null) {
+      return result;
+    } else if (type == dynamic) {
       return _serializer.fromMap(result, useTypeInfo: true);
     } else {
       return _serializer.fromMap(result, type: type);
@@ -163,14 +167,26 @@ class MongoDb {
    * and it can be a String or a DbCollection. [query] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future findAndModify(dynamic collection, {query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) {
+  Future findAndModify(dynamic collection, Type type, {query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) async {
     var dbCol = _collection(collection);
     if (query != null && query is! Map && query is! SelectorBuilder) {
       query = _serializer.toMap(query);
     }
     // TODO Implement WriteConcern in mongo_dart
-    return dbCol.findAndModify(query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert);
+    var result = await dbCol.findAndModify(query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert);
+    if (type == null) {
+      return result;
+    } else if (type == dynamic) {
+      return _serializer.fromMap(result, useTypeInfo: true);
+    } else {
+      return _serializer.fromMap(result, type: type);
+    }
   }
+
+  /**
+   * Wrapper for DbCollection.getLastError().
+   */
+  Future getLastError({WriteConcern writeConcern}) => innerConn.getLastError(writeConcern);
 
   DbCollection _collection(collection) {
     if (collection is String) {
