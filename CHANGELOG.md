@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+- Add getLastError method
+- Possible encoding shortcut by passing 'null' as Type
+
 ## 0.2.0
 - Update to serializer 0.5.0
 
