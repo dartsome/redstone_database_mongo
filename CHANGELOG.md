@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+- Update to redstone_database_plugin 0.3.0
+
 ## 0.3.0
 - Add getLastError method
 - Possible encoding shortcut by passing 'null' as Type
