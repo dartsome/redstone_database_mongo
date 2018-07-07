@@ -25,6 +25,6 @@ dev_dependencies:
   serializer_generator: ^0.8.0
   test: ^1.2.0
 
-dependency_overrides:
-  connection_pool:
-    path: ../connection_pool_2
+#dependency_overrides:
+#  connection_pool:
+#    path: ../connection_pool_2
