@@ -15,7 +15,10 @@ dependencies:
       url: https://github.com/dartsome/connection_pool.git
       ref: d9387ca9c46db6033121b7536405a033a5250fac
   mongo_dart: ^0.3.2
-  redstone_database_plugin: ^0.4.0
+  redstone_database_plugin:
+    git:
+      url: https://github.com/dartsome/redstone_database_plugin.git
+      ref: 525537d640a691fbcda69f13ba27014bdb882e9e
 
 dev_dependencies:
   redstone:
