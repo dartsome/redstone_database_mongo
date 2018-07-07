@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.0
+- Align with dart 2
+
 ## 0.4.0
 - Update to redstone_database_plugin 0.3.0
 
