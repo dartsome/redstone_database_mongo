@@ -10,7 +10,10 @@ import 'package:redstone_database_mongo/manager.dart';
 import 'package:redstone_database_mongo/service.dart';
 import 'package:redstone_database_plugin/plugin.dart';
 import 'package:serializer/codecs.dart';
-import 'package:serializer/serializer_codegen.dart';
+import 'package:serializer/serializer.dart';
+
+import 'server_example.codec.dart';
+export 'package:bson/bson.dart';
 
 @serializable
 class User {
@@ -20,38 +23,35 @@ class User {
   String custom;
 }
 
-
-main() {
-  var serializer = new CodegenSerializer(codec: JSON)
-    ..addTypeCodec(ObjectId, new ObjectIdCodec());
+void main() {
+  var serializer = new Serializer(codec: json)..addAllTypeCodecs(example_server_example_codecs);
   var dbManager = new MongoDbManager(serializer, "mongodb://localhost/test", poolSize: 3);
-  app.addPlugin(getDatabasePlugin(serializer, dbManager));
+  app.addPlugin(getDatabasePlugin(serializer, dbManager, null));
   app.setupConsoleLog(Level.INFO);
   app.start();
 }
 
-@app.Group("/users")
+@app.Group("")
 class UsersService extends MongoDbService<User> {
   UsersService(): super("users");
 
-  @app.DefaultRoute(methods: const [app.POST])
+  @app.Route("/users", methods: const [app.POST])
   @Encode()
-  Future<User> addUser(@Decode() User user) {
+  Future<User> addUser(@Decode() User user) async {
     app.redstoneLogger.info("POST /users ${user.name}");
     user.id = new ObjectId();
-    return insert(user).then((result) {
-      return user;
-    });
+    await insert(user);
+    return user;
   }
 
-  @app.DefaultRoute(methods: const [app.GET])
+  @app.Route("/users", methods: const [app.GET])
   @Encode()
   Future<List<User>> getUsers() {
     app.redstoneLogger.info("GET /users");
     return find();
   }
 
-  @app.Route("/:id", methods: const [app.GET])
+  @app.Route("/users/:id", methods: const [app.GET])
   @Encode()
   Future<User> getUser(String id) {
     app.redstoneLogger.info("GET /users/$id");
@@ -59,17 +59,19 @@ class UsersService extends MongoDbService<User> {
   }
 
 
-  @app.Route("/:id", methods: const [app.POST])
+  @app.Route("/users/:id", methods: const [app.POST])
   @Encode()
-  Future<User> replaceUser(String id, @Decode() User user) {
-    app.redstoneLogger.info("GET /users/$id");
-    return update({"_id": new ObjectId.fromHexString(id)}, user);
+  Future<User> replaceUser(String id, @Decode() User user) async {
+    app.redstoneLogger.info("POST /users/$id");
+    await update({"_id": new ObjectId.fromHexString(id)}, user);
+    return user;
   }
 
-  @app.Route("/:id", methods: const [app.PUT])
+  @app.Route("/users/:id", methods: const [app.PUT])
   @Encode()
-  Future<User> updateUser(String id, @Decode() User user) {
-    app.redstoneLogger.info("GET /users/$id");
-    return update({"_id": new ObjectId.fromHexString(id)}, user, override: false);
+  Future<User> updateUser(String id, @Decode() User user) async {
+    app.redstoneLogger.info("PUT /users/$id");
+    await update({"_id": new ObjectId.fromHexString(id)}, user, override: false);
+    return user;
   }
 }

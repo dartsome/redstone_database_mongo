@@ -6,11 +6,9 @@ import 'package:connection_pool/connection_pool.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:serializer/core.dart';
 
-bool isLastErrorValid(Map lastError) =>
-    lastError['ok'] == 1 && lastError['err'] == null;
+bool isLastErrorValid(Map lastError) => lastError['ok'] == 1 && lastError['err'] == null;
 
-bool isLastErrorDuplicateKey(Map lastError) =>
-    lastError["err"] != null && lastError["code"] == 11000;
+bool isLastErrorDuplicateKey(Map lastError) => lastError["err"] != null && lastError["code"] == 11000;
 
 /**
  * Wrapper for the MongoDb driver.
@@ -42,15 +40,17 @@ class MongoDb {
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
    * or an encodable object. The query result will be decoded to List<[type]>.
    */
-  Future<List> find(dynamic collection, Type type, [dynamic selector]) async {
+  Future<List<T>> find<T>(dynamic collection, Type type, [dynamic selector]) async {
+    if (type == null) {
+      throw ArgumentError.notNull("type");
+    }
+
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
     var result = await dbCol.find(selector).toList();
-    if (type == null) {
-      return result;
-    } else if (type == dynamic) {
+    if (type == dynamic) {
       return _serializer.fromList(result, useTypeInfo: true);
     } else {
       return _serializer.fromList(result, type: type);
@@ -64,15 +64,18 @@ class MongoDb {
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
    * or an encodable object. The query result will be decoded to an object of type [type]
    */
-  Future findOne(dynamic collection, Type type, [dynamic selector]) async {
+  Future<T> findOne<T>(dynamic collection, Type type, [dynamic selector]) async {
+    if (type == null) {
+      throw ArgumentError.notNull("type");
+    }
+
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
     var result = await dbCol.findOne(selector);
-    if (type == null) {
-      return result;
-    } else if (type == dynamic) {
+
+    if (type == dynamic) {
       return _serializer.fromMap(result, useTypeInfo: true);
     } else {
       return _serializer.fromMap(result, type: type);
@@ -86,7 +89,7 @@ class MongoDb {
    * and it can be a String or a DbCollection. [obj] is the object to be saved,
    * and can be a Map or an encodable object.
    */
-  Future save(dynamic collection, Object obj, {WriteConcern writeConcern}) {
+  Future<Map<String, dynamic>> save(dynamic collection, Object obj, {WriteConcern writeConcern}) {
     var dbCol = _collection(collection);
     if (obj is! Map) {
       obj = _serializer.toMap(obj);
@@ -101,7 +104,7 @@ class MongoDb {
    * and it can be a String or a DbCollection. [obj] is the object to be inserted,
    * and can be a Map or an encodable object.
    */
-  Future insert(dynamic collection, Object obj, {WriteConcern writeConcern}) async {
+  Future<Map<String, dynamic>> insert(dynamic collection, Object obj, {WriteConcern writeConcern}) async {
     DbCollection dbCol = _collection(collection);
     if (obj is! Map) {
       obj = _serializer.toMap(obj);
@@ -116,7 +119,7 @@ class MongoDb {
    * and it can be a String or a DbCollection. [objs] are the objects to be inserted,
    * and can be a list of maps, or a list of encodable objects.
    */
-  Future insertAll(dynamic collection, List objs, {WriteConcern writeConcern}) {
+  Future<Map<String, dynamic>> insertAll(dynamic collection, List objs, {WriteConcern writeConcern}) {
     var dbCol = _collection(collection);
     return dbCol.insertAll(objs.map((obj) => _serializer.toMap(obj)).toList(), writeConcern: writeConcern);
   }
@@ -131,7 +134,8 @@ class MongoDb {
    * [override] is false, then the codec will produce a ModifierBuilder, and only
    * non null fields will be updated, otherwise, the entire document will be updated.
    */
-  Future update(dynamic collection, dynamic selector, Object update, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
+  Future<Map<String, dynamic>> update(dynamic collection, dynamic selector, Object update,
+      {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
@@ -139,7 +143,7 @@ class MongoDb {
     if (update != null && update is! Map && update is! ModifierBuilder) {
       update = _serializer.toMap(update);
       if (!override) {
-        update = { r'$set': update };
+        update = {r'$set': update};
       }
     }
     return dbCol.update(selector, update, upsert: upsert, multiUpdate: multiUpdate, writeConcern: writeConcern);
@@ -152,12 +156,12 @@ class MongoDb {
    * and it can be a String or a DbCollection. [selector] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future remove(dynamic collection, dynamic selector, {WriteConcern writeConcern}) {
+  Future<Map<String, dynamic>> remove(dynamic collection, dynamic selector, {WriteConcern writeConcern}) {
     var dbCol = _collection(collection);
     if (selector != null && selector is! Map && selector is! SelectorBuilder) {
       selector = _serializer.toMap(selector);
     }
-    return dbCol.remove(selector, writeConcern);
+    return dbCol.remove(selector, writeConcern: writeConcern);
   }
 
   /**
@@ -167,16 +171,21 @@ class MongoDb {
    * and it can be a String or a DbCollection. [query] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future findAndModify(dynamic collection, Type type, {query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) async {
+  Future<T> findAndModify<T>(dynamic collection, Type type,
+      {query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) async {
+    if (type == null) {
+      throw ArgumentError.notNull("type");
+    }
+
     var dbCol = _collection(collection);
     if (query != null && query is! Map && query is! SelectorBuilder) {
       query = _serializer.toMap(query);
     }
     // TODO Implement WriteConcern in mongo_dart
-    var result = await dbCol.findAndModify(query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert);
-    if (type == null) {
-      return result;
-    } else if (type == dynamic) {
+    var result = await dbCol.findAndModify(
+        query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert);
+
+    if (type == dynamic) {
       return _serializer.fromMap(result, useTypeInfo: true);
     } else {
       return _serializer.fromMap(result, type: type);
@@ -186,7 +195,7 @@ class MongoDb {
   /**
    * Wrapper for DbCollection.getLastError().
    */
-  Future getLastError({WriteConcern writeConcern}) => innerConn.getLastError(writeConcern);
+  Future<Map<String, dynamic>> getLastError({WriteConcern writeConcern}) => innerConn.getLastError(writeConcern);
 
   DbCollection _collection(collection) {
     if (collection is String) {

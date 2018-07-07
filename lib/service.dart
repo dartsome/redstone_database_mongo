@@ -84,8 +84,8 @@ class MongoDbService<T> {
    * [selector] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future<List<T>> find([dynamic selector]) {
-    return mongoDb.find(collection, T, selector);
+  Future<List<T>> find([dynamic selector]) async {
+    return await mongoDb.find<T>(collection, T, selector);
   }
 
   /**
@@ -95,7 +95,7 @@ class MongoDbService<T> {
    * or an encodable object.
    */
   Future<T> findOne([dynamic selector]) {
-    return mongoDb.findOne(collection, T, selector);
+    return mongoDb.findOne<T>(collection, T, selector);
   }
 
   /**
@@ -103,7 +103,7 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be saved.
    */
-  Future save(obj, {WriteConcern writeConcern}) {
+  Future<Map<String,dynamic>> save(obj, {WriteConcern writeConcern}) {
     return mongoDb.save(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -112,7 +112,7 @@ class MongoDbService<T> {
    *
    * [obj] is the object to be inserted.
    */
-  Future insert(obj, {WriteConcern writeConcern}) {
+  Future<Map<String,dynamic>> insert(obj, {WriteConcern writeConcern}) {
     return mongoDb.insert(collection, obj, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -121,7 +121,7 @@ class MongoDbService<T> {
    *
    * [objs] are the objectes to be inserted.
    */
-  Future insertAll(List objs, {WriteConcern writeConcern}) {
+  Future<Map<String,dynamic>> insertAll(List objs, {WriteConcern writeConcern}) {
     return mongoDb.insertAll(collection, objs, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -133,7 +133,7 @@ class MongoDbService<T> {
    * or an encodable object. If [override] is false, then only non null fields
    * will be updated, otherwise, the entire document will be replaced.
    */
-  Future update(dynamic selector, Object update, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
+  Future<Map<String,dynamic>> update(dynamic selector, Object update, {bool override: true, bool upsert: false, bool multiUpdate: false, WriteConcern writeConcern}) {
     return mongoDb.update(collection, selector, update,
         override: override, upsert: upsert,
         multiUpdate: multiUpdate, writeConcern: writeConcern ?? this.writeConcern);
@@ -145,7 +145,7 @@ class MongoDbService<T> {
    * [selector] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future remove(dynamic selector, {WriteConcern writeConcern}) {
+  Future<Map<String,dynamic>> remove(dynamic selector, {WriteConcern writeConcern}) {
     return mongoDb.remove(collection, selector, writeConcern: writeConcern ?? this.writeConcern);
   }
 
@@ -155,12 +155,12 @@ class MongoDbService<T> {
    * [query] can be a Map, a SelectorBuilder,
    * or an encodable object.
    */
-  Future findAndModify({query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) {
-    return mongoDb.findAndModify(collection, T, query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert, writeConcern: writeConcern ?? this.writeConcern);
+  Future<T> findAndModify({query, sort, bool remove, update, bool returnNew, fields, bool upsert, WriteConcern writeConcern}) {
+    return mongoDb.findAndModify<T>(collection, T, query: query, sort: sort, remove: remove, update: update, returnNew: returnNew, fields: fields, upsert: upsert, writeConcern: writeConcern ?? this.writeConcern);
   }
 
   /**
    * Wrapper for DbCollection.getLastError()
    */
-  Future getLastError({WriteConcern writeConcern}) => mongoDb.getLastError(writeConcern: writeConcern ?? this.writeConcern);
+  Future<Map<String,dynamic>> getLastError({WriteConcern writeConcern}) => mongoDb.getLastError(writeConcern: writeConcern ?? this.writeConcern);
 }
