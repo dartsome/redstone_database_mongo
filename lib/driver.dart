@@ -104,7 +104,7 @@ class MongoDb {
    * and it can be a String or a DbCollection. [obj] is the object to be inserted,
    * and can be a Map or an encodable object.
    */
-  Future<Map<String, dynamic>> insert(dynamic collection, Object obj, {WriteConcern writeConcern}) async {
+  Future<Map<String, dynamic>> insert(dynamic collection, Object obj, {WriteConcern writeConcern}) {
     DbCollection dbCol = _collection(collection);
     if (obj is! Map) {
       obj = _serializer.toMap(obj);
