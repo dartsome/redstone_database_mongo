@@ -24,7 +24,7 @@ dev_dependencies:
   redstone:
     git:
       url: https://github.com/dartsome/redstone.git
-      ref: cf6fff976135f28256cf98db560774a05d08634d
+      ref: cf28bc7c0447e15a6dc65918cb5b1eda4c979999
   serializer_generator: ^0.8.0
   test: ^1.2.0
 
